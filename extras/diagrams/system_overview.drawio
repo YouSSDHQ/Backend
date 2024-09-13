@@ -1,0 +1,83 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.8 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.8">
+  <diagram name="Page-1" id="tqgh8wIxIpG1xmtgchpj">
+    <mxGraphModel dx="1098" dy="868" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-162" value="Blockchain" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="20" y="761" width="214" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-163" value="Stellar Blockchain" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="55" y="786" width="144" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-164" value="Backend" style="whiteSpace=wrap;strokeWidth=2;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="30" y="476" width="778" height="216" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-165" value="Quart Server" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="395" y="501" width="107" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-166" value="Smart Contract" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="65" y="619" width="125" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-167" value="Airtime Conversion Service" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="239" y="619" width="209" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-168" value="KYC Platform" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="498" y="619" width="110" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-169" value="Database" style="shape=cylinder3;boundedLbl=1;backgroundOutline=1;size=10;strokeWidth=2;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="669" y="604" width="81" height="63" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-170" value="User" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="424" y="270" width="48" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-171" value="USSD Interface" style="whiteSpace=wrap;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="388" y="373" width="121" height="34" as="geometry" />
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-172" value="Interacts with" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-170" target="u9Umea-9Md1OC9XHzGHI-171">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-173" value="Sends requests to" style="curved=1;startArrow=none;endArrow=block;exitX=0.5;exitY=1;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-171" target="u9Umea-9Md1OC9XHzGHI-165">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-174" value="Processes requests" style="curved=1;startArrow=none;endArrow=block;exitX=0;exitY=0.75;entryX=0.49;entryY=-0.01;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-165" target="u9Umea-9Md1OC9XHzGHI-166">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="127" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-175" value="Stores/Retrieves data" style="curved=1;startArrow=none;endArrow=block;exitX=1;exitY=0.81;entryX=0.5;entryY=0;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-165" target="u9Umea-9Md1OC9XHzGHI-169">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="709" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-176" value="Interacts with" style="curved=1;startArrow=none;endArrow=block;exitX=0.49;exitY=0.99;entryX=0.5;entryY=0.01;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-166" target="u9Umea-9Md1OC9XHzGHI-163">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-177" value="Converts airtime" style="curved=1;startArrow=none;endArrow=block;exitX=0.17;exitY=1;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-165" target="u9Umea-9Md1OC9XHzGHI-167">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="343" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="u9Umea-9Md1OC9XHzGHI-178" value="Verifies identity" style="curved=1;startArrow=none;endArrow=block;exitX=0.82;exitY=1;entryX=0.5;entryY=-0.01;rounded=0;" edge="1" parent="1" source="u9Umea-9Md1OC9XHzGHI-165" target="u9Umea-9Md1OC9XHzGHI-168">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="553" y="570" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
