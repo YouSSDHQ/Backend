@@ -9,7 +9,7 @@ from spl.token.constants import TOKEN_PROGRAM_ID
 
 
 class SolanaTransfer:
-    def __init__(self, rpc_url="https://api.mainnet-beta.solana.com"):
+    def __init__(self, rpc_url="https://api.devnet.solana.com"):
         self.client = AsyncClient(rpc_url)
 
     async def set_source_wallet(self, private_key: str):
