@@ -11,6 +11,7 @@ from spl.token.constants import TOKEN_PROGRAM_ID
 class SolanaTransfer:
     """
     A class for handling Solana transactions and token operations.
+    Idea: https://github.com/SeveighTech-Management/solana-py-implementation
     """
 
     def __init__(self, rpc_url="https://api.devnet.solana.com"):
