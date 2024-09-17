@@ -1,6 +1,7 @@
 from typing import Union
+
 from solders.keypair import Keypair
-from sqlalchemy import or_, select, or_
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.user import Users
@@ -16,7 +17,7 @@ class UserService:
         full_name = user_dict.get("full_name")
         existing_user = await self.get_user_by_phone_number(phone_number)
         if existing_user:
-            return None
+            return "END User already exists"
 
         keypair = Keypair()
         user = Users(
