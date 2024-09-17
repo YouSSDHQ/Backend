@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from pydantic import UUID4
-from sqlalchemy import Integer, String, Uuid
+from sqlalchemy import DateTime, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
@@ -17,6 +19,13 @@ class Users(Base):
     private_key: Mapped[str] = mapped_column(String(100))
     wallet_alias: Mapped[str] = mapped_column(String(100))
     transaction_pin: Mapped[int] = mapped_column(Integer)
+    sol_balance: Mapped[int] = mapped_column(Integer, nullable=True, default=0)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    last_balance_update: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
 
     def __init__(
         self,
@@ -46,4 +55,7 @@ class Users(Base):
             "username": self.username,
             "public_key": self.public_key,
             "alias": self.wallet_alias,
+            "balance": self.sol_balance,
+            "created_at": self.created_at,
+            "last_balance_update": self.last_balance_update,
         }
