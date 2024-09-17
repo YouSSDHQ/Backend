@@ -1,4 +1,5 @@
-from sqlalchemy import Integer, String
+from pydantic import UUID4
+from sqlalchemy import Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
 from models.base import Base
@@ -7,12 +8,14 @@ from models.base import Base
 class Users(Base):
     __tablename__ = "users"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[UUID4] = mapped_column(Uuid, primary_key=True)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     username: Mapped[str] = mapped_column(String(30))
     password: Mapped[str] = mapped_column(String)
-    private_key: Mapped[str] = mapped_column(String)
+    public_key: Mapped[str] = mapped_column(String(100))
+    private_key: Mapped[str] = mapped_column(String(100))
+    wallet_alias: Mapped[str] = mapped_column(String(100))
     transaction_pin: Mapped[int] = mapped_column(Integer)
 
     def __init__(
@@ -22,6 +25,8 @@ class Users(Base):
         username: str,
         password: str,
         private_key: str,
+        public_key: str,
+        wallet_alias: str,
         transaction_pin: int,
     ):
         self.full_name = full_name
@@ -30,6 +35,8 @@ class Users(Base):
         self.password = password
         self.private_key = private_key
         self.transaction_pin = transaction_pin
+        self.public_key = public_key
+        self.wallet_alias = wallet_alias
 
     def to_dict(self) -> dict[str, str | int]:
         return {
@@ -37,7 +44,6 @@ class Users(Base):
             "full_name": self.full_name,
             "phone_number": self.phone_number,
             "username": self.username,
-            "password": self.password,
-            "private_key": self.private_key,
-            "transaction_pin": self.transaction_pin,
+            "public_key": self.public_key,
+            "alias": self.wallet_alias,
         }
