@@ -26,7 +26,7 @@ async def ussd_callback(data: UssdRequest):
     )
 
     # Process the USSD request
-    response = process_request(data)
+    response = await process_request(data)
 
     return response
 
