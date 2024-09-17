@@ -11,7 +11,7 @@ from routes import misc, ussd
 load_dotenv()
 
 
-app = Quart("StellSSD")
+app = Quart("YouSSD")
 QuartSchema(app, convert_casing=True)
 secret_key = str(os.getenv(key="SECRET_KEY")).strip()
 if len(secret_key) < 10:
