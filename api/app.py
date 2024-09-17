@@ -1,11 +1,13 @@
 import os
 import secrets
+
 from dotenv import load_dotenv
-from quart import Quart, g
+from quart import Quart
 from quart_schema import QuartSchema
 
 from models.base import BaseResponse
 from routes import misc, ussd
+
 load_dotenv()
 
 
@@ -22,16 +24,20 @@ if len(secret_key) < 10:
 
 app.config["SECRET_KEY"] = secret_key
 
-@app.before_request
-async def before_request():
-    print("before request")
-    print(g.__dict__)
-    g.setdefault('user', None)
+
+@app.before_serving
+async def before_serving():
+    print("before serving")
+    from services.database import init_db
+
+    await init_db()
+
 
 @app.errorhandler(Exception)
 async def handle_error(error: Exception):
     print(error)
     return BaseResponse(message=str(error), status="error")
+
 
 app.register_blueprint(misc.bp)
 app.register_blueprint(ussd.bp)
