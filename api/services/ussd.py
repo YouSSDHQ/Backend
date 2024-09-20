@@ -12,7 +12,7 @@ from services.user import UserService
 session_cache = {}
 
 # Add these to your existing imports and global variables
-sol_transfer = SolanaTransfer("http://localhost:8899")
+sol_transfer = SolanaTransfer(os.getenv("RPC_URL"))
 
 
 def get_session_data(session_id: str) -> Dict:
