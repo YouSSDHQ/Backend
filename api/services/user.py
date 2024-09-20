@@ -1,7 +1,7 @@
 from typing import Union
 
 from solders.keypair import Keypair
-from sqlalchemy import or_, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.user import Users
@@ -33,9 +33,8 @@ class UserService:
         return user
 
     async def get_user(self, user_id: Union[int | str]):
-        result = await self.session.execute(
-            select(Users).where(or_(Users.id == user_id, Users.phone_number == user_id))
-        )
+        result = await self.session.execute(select(Users).where(Users.id == user_id))
+
         return result.scalar_one_or_none()
 
     async def get_user_by_phone_number(self, phone_number: str):
