@@ -54,7 +54,16 @@ async def process_request(data: UssdRequest) -> str:
 
 async def handle_wallet_access(data: UssdRequest) -> str:
     set_session(data.session_id, {"state": "wallet_access"})
-    return "CON Wallet Access:\n1. View Balance\n2. Send sol\n3. Back to Main Menu"
+    response = data.text.split("*")[-1]
+    if response == "1":
+        return await handle_view_balance(data)
+    elif response == "2":
+        return "CON Coming Soon!"
+    elif response == "3":
+        set_session(data.session_id, {"state": "initial"})
+        return "CON Wallet Access:\n1. View Balance\n2. Send sol\n3. Back to Main Menu"
+    else:
+        return "END An error occurred. Please try again."
 
 
 async def handle_existing_user(data: UssdRequest) -> str:
@@ -68,15 +77,12 @@ async def handle_existing_user(data: UssdRequest) -> str:
 
 
 async def handle_view_balance(data: UssdRequest) -> str:
-    session_data = get_session_data(data.session_id)
-    user_id = session_data.get("user_id")
-
-    if not user_id:
-        return "END Please sign up first."
-
     async with get_session() as sess:
         user_service = UserService(sess)
-        user = await user_service.get_user(user_id)
+        user = await user_service.get_user_by_phone_number(data.phone_number)
+
+        if not user:
+            return "END Please sign up first."
 
         if user.last_balance_update is None and user.sol_balance == 0:
             balance = await sol_transfer.get_solana_balance(
@@ -86,13 +92,18 @@ async def handle_view_balance(data: UssdRequest) -> str:
             user.sol_balance = balance
             await sess.commit()  # No need to add user again, as it's already tracked
 
-        elif (
-            user.last_balance_update
-            and datetime.now() - user.last_balance_update < timedelta(hours=1)
-        ):
+        elif user.last_balance_update and (
+            datetime.now() - user.last_balance_update
+        ) < timedelta(seconds=10):
             balance = user.sol_balance
-
-        set_session(data.session_id, {"state": "initial"})
+        else:
+            balance = await sol_transfer.get_solana_balance(
+                Pubkey.from_string(user.public_key)
+            )
+            user.last_balance_update = datetime.now()
+            user.sol_balance = balance
+            await sess.commit()
+        delete_session(data.session_id)
 
     return f"END Your balance is: {balance} SOL"
 
