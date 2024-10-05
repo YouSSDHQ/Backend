@@ -245,6 +245,10 @@ async def handle_initial_state(data: UssdRequest) -> str:
             "CON Enter your desired username and full name\ne.g 'idris_cool, Ade Obi':"
         )
     elif data.text == "2":
+        user_id = get_session_data(data.session_id).get("user_id")
+        if not user_id:
+            delete_session(data.session_id)
+            return "END Please sign up first."
         set_session(data.session_id, {"state": "wallet_access"})
         return (
             "CON Wallet Access:\n1. View Balance\n2. Send Tokens\n3. Back to Main Menu"
