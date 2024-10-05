@@ -187,20 +187,22 @@ async def finalize_transaction(
     sender_keypair = await get_user_keypair(user_id)
     recipient_pubkey = await get_user_public_key(recipient)
 
-        try:
-            tx_signature = await sol_transfer.send_sol(
-                sender_keypair, Pubkey.from_string(recipient_pubkey), amount
-            )
-            set_session(data.session_id, {"state": "initial"})
-            return (
-                f"END Tokens sent successfully. Transaction signature: {tx_signature}"
-            )
-        except Exception as e:
-            set_session(data.session_id, {"state": "initial"})
-            return f"END Failed to send tokens: {str(e)}"
-    else:
-        return "END Invalid input. Please try again."
+    try:
+        tx_signature = await sol_transfer.send_sol(
+            sender_keypair, Pubkey.from_string(recipient_pubkey), amount
+        )
+        set_session(data.session_id, {"state": "initial"})
+        async with get_session() as sess:
+            user_service = UserService(sess)
+            user = await user_service.get_user(user_id)
+            user.sol_balance -= amount
+            await sess.commit()
+        return f"END Tokens sent successfully. Transaction signature: {tx_signature}"
+    except Exception as e:
+        set_session(data.session_id, {"state": "initial"})
+        return f"END Failed to send tokens: {str(e)}"
 
+# region initial state
 
 async def handle_initial_state(data: UssdRequest) -> str:
     """Handle the initial state of the USSD session"""
