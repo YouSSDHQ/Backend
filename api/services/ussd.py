@@ -25,6 +25,13 @@ def set_session(session_id: str, data: Dict):
     """Store session data in memory cache"""
     if session_id not in session_cache:
         session_cache[session_id] = data
+        session_cache[session_id].update(
+            {
+                "expiration_time": (datetime.now() + timedelta(seconds=10)).isoformat(
+                    timespec="seconds"
+                )
+            }
+        )
         return
 
     session_cache[session_id].update(data)
