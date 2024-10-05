@@ -48,10 +48,14 @@ async def process_request(data: UssdRequest) -> str:
         return await handle_signup_username(data)
     elif state == "wallet_access":
         return await handle_wallet_access(data)
-    elif state == "view_balance":
-        return await handle_view_balance(data)
     elif state == "send_tokens":
         return await handle_send_tokens(data)
+    elif state == "send_tokens_recipient":
+        return await handle_send_tokens_amount(data)
+    elif state == "send_tokens_confirm":
+        return await handle_send_tokens_confirm(data)
+    elif state == "view_balance":
+        return await handle_view_balance(data)
     else:
         return "END An error occurred. Please try again."
 
@@ -95,7 +99,7 @@ async def handle_view_balance(data: UssdRequest) -> str:
             )
             user.last_balance_update = datetime.now()
             user.sol_balance = balance
-            await sess.commit()  # No need to add user again, as it's already tracked
+            await sess.commit()
 
         elif user.last_balance_update and (
             datetime.now() - user.last_balance_update
