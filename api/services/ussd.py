@@ -113,23 +113,75 @@ async def handle_view_balance(data: UssdRequest) -> str:
     return f"END Your balance is: {balance} SOL"
 
 
-async def handle_send_tokens(data: UssdRequest) -> str:  # TODO
+# region send tokens
+async def handle_send_tokens(data: UssdRequest) -> str:
+    """Handles the initial stage of sending tokens, requesting the recipient."""
     session_data = get_session_data(data.session_id)
     user_id = session_data.get("user_id")
     if not user_id:
         return "END Please sign up first."
 
     parts = data.text.split("*")
-    if len(parts) == 2:
-        set_session(data.session_id, {"state": "send_tokens", "recipient": parts[1]})
-        return "CON Enter amount to send (in SOL):"
-    elif len(parts) == 3:
-        recipient = session_data.get("recipient")
-        amount = float(parts[2])
+    if len(parts) == 3:
+        recipient = parts[-1]
+        set_session(
+            data.session_id, {"state": "send_tokens_recipient", "recipient": recipient}
+        )
+        return f"CON Enter amount to send to {recipient} (in SOL):"
+    else:
+        return "END Invalid input. Please try again."
 
-        # Retrieve sender's keypair and recipient's public key
-        sender_keypair = get_user_keypair(user_id)
-        recipient_pubkey = get_user_public_key(recipient)
+
+async def handle_send_tokens_amount(data: UssdRequest) -> str:
+    """Handles the stage of receiving the amount to send."""
+    session_data = get_session_data(data.session_id)
+    user_id = session_data.get("user_id")
+    recipient = session_data.get("recipient")
+    if not user_id or not recipient:
+        return "END An error occurred. Please try again."
+
+    parts = data.text.split("*")
+    try:
+        amount = float(parts[-1])
+        set_session(
+            data.session_id,
+            {"state": "send_tokens_confirm", "recipient": recipient, "amount": amount},
+        )
+        return f"CON Confirm sending {amount} SOL to {recipient}? \n1. Yes\n2. No"
+    except Exception as e:
+        print(str(e))
+        return "END Invalid input. Please try again."
+
+
+async def handle_send_tokens_confirm(data: UssdRequest) -> str:
+    """Handles the stage of confirming the transaction."""
+    session_data = get_session_data(data.session_id)
+    user_id = session_data.get("user_id")
+    recipient = session_data.get("recipient")
+    amount = session_data.get("amount")
+    if not user_id or not recipient or not amount:
+        delete_session(data.session_id)
+        return "END An error occurred. Please try again."
+
+    parts = data.text.split("*")
+    print(f"Parts: {parts}")
+    if parts[-1] == "1":
+        await finalize_transaction(data, user_id, recipient, amount)
+    elif parts[-1] == "2":
+        delete_session(data.session_id)
+        return "END Transaction canceled."
+    else:
+        delete_session(data.session_id)
+        return "END Invalid input. Please try again."
+
+
+async def finalize_transaction(
+    data: UssdRequest, user_id: int, recipient: str, amount: float
+) -> str:
+    """Finalizes the transaction by sending the tokens."""
+    # Retrieve sender's keypair and recipient's public key
+    sender_keypair = await get_user_keypair(user_id)
+    recipient_pubkey = await get_user_public_key(recipient)
 
         try:
             tx_signature = await sol_transfer.send_sol(
