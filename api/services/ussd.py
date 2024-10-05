@@ -40,7 +40,16 @@ async def process_request(data: UssdRequest) -> str:
     """Main function to process USSD requests"""
     session_data = get_session_data(data.session_id)
     state = session_data.get("state", "initial")
-
+    set_session(
+        data.session_id, {"state": "initial", "phone_number": data.phone_number}
+    )
+    async with get_session() as sess:
+        user_service = UserService(sess)
+        user = await user_service.get_user_by_phone_number(data.phone_number)
+        if not user:
+            set_session(data.session_id, {"user_id": None})
+        else:
+            set_session(data.session_id, {"user_id": user.id, "user": user.to_dict()})
     if state == "initial":
         return await handle_initial_state(data)
     elif state == "existing_user":
@@ -203,8 +212,8 @@ async def finalize_transaction(
         set_session(data.session_id, {"state": "initial"})
         return f"END Failed to send tokens: {str(e)}"
 
-# region initial state
 
+# region initial state
 async def handle_initial_state(data: UssdRequest) -> str:
     """Handle the initial state of the USSD session"""
     if data.text == "":
