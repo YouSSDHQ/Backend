@@ -9,7 +9,7 @@ from services.transfer import SolanaTransfer
 from services.user import UserService
 
 # Initialize in-memory cache
-session_cache = {}
+session_cache = {}  # TODO: replace with redis
 
 # Add these to your existing imports and global variables
 sol_transfer = SolanaTransfer(os.getenv("RPC_URL"))
@@ -22,7 +22,11 @@ def get_session_data(session_id: str) -> Dict:
 
 def set_session(session_id: str, data: Dict):
     """Store session data in memory cache"""
-    session_cache[session_id] = data
+    if session_id not in session_cache:
+        session_cache[session_id] = data
+        return
+
+    session_cache[session_id].update(data)
 
 
 def delete_session(session_id: str):
@@ -58,7 +62,8 @@ async def handle_wallet_access(data: UssdRequest) -> str:
     if response == "1":
         return await handle_view_balance(data)
     elif response == "2":
-        return "CON Coming Soon!"
+        set_session(data.session_id, {"state": "send_tokens"})
+        return "CON Enter the recipient's username:"
     elif response == "3":
         set_session(data.session_id, {"state": "initial"})
         return "CON Wallet Access:\n1. View Balance\n2. Send sol\n3. Back to Main Menu"
