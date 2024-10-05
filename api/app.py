@@ -1,8 +1,9 @@
 import os
 import secrets
+from pprint import pprint
 
 from dotenv import load_dotenv
-from quart import Quart
+from quart import Quart, Response
 from quart_schema import QuartSchema
 
 from models.base import BaseResponse
@@ -33,10 +34,20 @@ async def before_serving():
     await init_db()
 
 
+@app.after_request
+async def aft_request(response: Response):
+    print("after request")
+    from services.ussd import session_cache
+
+    print("Current session")
+    pprint(session_cache, indent=3)
+    return response
+
+
 @app.errorhandler(Exception)
 async def handle_error(error: Exception):
     print(error)
-    return BaseResponse(message=str(error), status="error")
+    return f"END An error occurred {str(error)}"
 
 
 app.register_blueprint(misc.bp)
