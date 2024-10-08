@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from typing import Optional
 from uuid import uuid4
 
 from pydantic import UUID4, BaseModel, EmailStr, Field
@@ -34,7 +35,7 @@ class Waitlist(Base):
 
 
 class WaitlistJoinRequest(BaseModel):
-    email: EmailStr = Field(..., description="Email address")
+    email: Optional[EmailStr] = Field(..., description="Email address")
     phone_number: str = Field(
         ..., description="Phone number", serialization_alias="phoneNumber"
     )

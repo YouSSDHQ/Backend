@@ -7,7 +7,7 @@ from quart import Quart, Response
 from quart_schema import QuartSchema
 
 from models.base import BaseResponse
-from routes import misc, ussd
+from routes import misc, ussd, waitlist
 
 load_dotenv()
 
@@ -40,7 +40,7 @@ async def aft_request(response: Response):
     from services.ussd import session_cache
 
     print("Current session")
-    pprint(session_cache, indent=3)
+    pprint(session_cache, indent=2)
     return response
 
 
@@ -52,6 +52,7 @@ async def handle_error(error: Exception):
 
 app.register_blueprint(misc.bp)
 app.register_blueprint(ussd.bp)
+app.register_blueprint(waitlist.bp)
 
 
 @app.route("/")
