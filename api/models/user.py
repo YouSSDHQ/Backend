@@ -17,7 +17,7 @@ class Users(Base):
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     username: Mapped[str] = mapped_column(String(30), nullable=True)
     password: Mapped[str] = mapped_column(String, nullable=True)
-    public_key: Mapped[str] = mapped_column(String(100), nullable=False)
+    public_key: Mapped[str] = mapped_column(String(300), nullable=False)
     private_key: Mapped[str] = mapped_column(String(100), nullable=False)
     wallet_alias: Mapped[str] = mapped_column(String(100), nullable=True)
     transaction_pin: Mapped[int] = mapped_column(Integer, nullable=True)
