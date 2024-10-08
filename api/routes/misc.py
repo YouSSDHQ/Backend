@@ -10,3 +10,8 @@ async def logs():
     logs = await request.values
     print(f"logs: {logs}")
     return "pong"
+
+
+@bp.route("/health")
+async def health():
+    return "OK"

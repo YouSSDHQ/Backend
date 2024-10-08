@@ -1,10 +1,8 @@
-from quart import Blueprint, Quart
+from quart import Blueprint
 from quart_schema import DataSource, validate_request
 
 from models.ussd import UssdRequest
 from services.ussd import process_request
-
-app = Quart(__name__)
 
 bp = Blueprint("ussd", __name__, url_prefix="")
 
@@ -29,12 +27,3 @@ async def ussd_callback(data: UssdRequest):
     response = await process_request(data)
 
     return response
-
-
-@app.route("/health")
-async def health():
-    return "OK"
-
-
-if __name__ == "__main__":
-    app.run(debug=True, port=5000)
