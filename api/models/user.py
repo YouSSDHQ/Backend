@@ -13,6 +13,7 @@ class Users(Base):
 
     id: Mapped[UUID4] = mapped_column(Uuid, primary_key=True, default=uuid4)
     full_name: Mapped[str] = mapped_column(String(100), nullable=False)
+    email_address: Mapped[str] = mapped_column(String(100), nullable=True)
     phone_number: Mapped[str] = mapped_column(String(15), nullable=False)
     username: Mapped[str] = mapped_column(String(30), nullable=True)
     password: Mapped[str] = mapped_column(String, nullable=True)
@@ -38,6 +39,7 @@ class Users(Base):
         password: str = None,
         wallet_alias: str = None,
         transaction_pin: int = None,
+        email_address: str = None,
     ):
         self.full_name = full_name
         self.phone_number = phone_number
@@ -47,6 +49,7 @@ class Users(Base):
         self.public_key = public_key
         self.wallet_alias = wallet_alias
         self.transaction_pin = transaction_pin
+        self.email_address = email_address
 
     def to_dict(self) -> dict[str, str | int]:
         return {

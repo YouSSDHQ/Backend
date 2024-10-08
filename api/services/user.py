@@ -1,10 +1,11 @@
 from typing import Union
 
 from solders.keypair import Keypair
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.user import Users
+from models.waitlist import Waitlist, WaitlistJoinRequest
 
 
 class UserService:
@@ -33,6 +34,21 @@ class UserService:
         return user
 
     async def get_user(self, user_id: Union[int | str]):
+        result = await self.session.execute(
+            select(Users).where(
+                or_(
+                    Users.id == user_id,
+                    Users.phone_number == user_id,
+                    Users.username == user_id,
+                    Users.public_key == user_id,
+                    Users.wallet_alias == user_id,
+                )
+            )
+        )
+
+        return result.scalar_one_or_none()
+
+    async def get_user_by_id(self, user_id: Union[int | str]):
         result = await self.session.execute(select(Users).where(Users.id == user_id))
 
         return result.scalar_one_or_none()
@@ -64,3 +80,24 @@ class UserService:
             await self.session.delete(user)
             await self.session.commit()
         return user
+
+    async def add_to_waitlist(self, data: WaitlistJoinRequest):
+        email = data.email
+        phone_number = data.phone_number
+        user_id = None
+        stmt = select(Waitlist).where(
+            or_(Waitlist.email == email, Waitlist.phone_number == phone_number)
+        )
+        waitlisted = await self.session.execute(stmt)
+        if waitlisted.scalar_one_or_none():
+            id_ = phone_number or email
+            return 409, f"User {id_} already waitlisted"
+        user = await self.get_user_by_phone_number(data.phone_number)
+        if user:
+            user_id = user.id
+        waitlist = Waitlist(
+            email=data.email, phone_number=data.phone_number, user_id=user_id
+        )
+        self.session.add(waitlist)
+        await self.session.commit()
+        return 200, "Congrats, you've been added to our waitlist"
