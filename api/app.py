@@ -4,7 +4,11 @@ from pprint import pprint
 
 from dotenv import load_dotenv
 from quart import Quart, Response
-from quart_schema import QuartSchema
+from quart_schema import (
+    QuartSchema,
+    RequestSchemaValidationError,
+    ResponseSchemaValidationError,
+)
 
 from models.base import BaseResponse
 from routes import misc, ussd, waitlist
@@ -44,10 +48,19 @@ async def aft_request(response: Response):
     return response
 
 
+@app.errorhandler(RequestSchemaValidationError)
+@app.errorhandler(ResponseSchemaValidationError)
+async def handle_validation_error(
+    error: RequestSchemaValidationError | ResponseSchemaValidationError,
+):
+    print(error)
+    return BaseResponse(message=f"END An error occurred {str(error)}"), int(error.code)
+
+
 @app.errorhandler(Exception)
 async def handle_error(error: Exception):
     print(error)
-    return f"END An error occurred {str(error)}"
+    return f"END An error occurred {str(error)}", 500
 
 
 app.register_blueprint(misc.bp)
