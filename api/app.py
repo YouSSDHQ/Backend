@@ -4,6 +4,7 @@ from pprint import pprint
 
 from dotenv import load_dotenv
 from quart import Quart, Response
+from quart_cors import cors
 from quart_schema import (
     QuartSchema,
     RequestSchemaValidationError,
@@ -17,7 +18,9 @@ load_dotenv()
 
 
 app = Quart("YouSSD")
+cors(app, allow_origin=["https://youssd-8cl6.onrender.com", "http://localhost:5173"])
 QuartSchema(app, convert_casing=True)
+
 secret_key = str(os.getenv(key="SECRET_KEY")).strip()
 if len(secret_key) < 10:
     print("Generating a random secret key...")
