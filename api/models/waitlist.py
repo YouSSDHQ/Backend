@@ -1,8 +1,7 @@
 from datetime import datetime, timezone
-from typing import Optional
 from uuid import uuid4
 
-from pydantic import UUID4, BaseModel, EmailStr, Field
+from pydantic import UUID4, BaseModel, Field
 from sqlalchemy import DateTime, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -35,9 +34,8 @@ class Waitlist(Base):
 
 
 class WaitlistJoinRequest(BaseModel):
-    email: Optional[EmailStr] = Field(..., description="Email address")
     phone_number: str = Field(
-        ..., description="Phone number", serialization_alias="phoneNumber"
+        ..., description="Phone number", examples=["+2348078807660"]
     )
 
 

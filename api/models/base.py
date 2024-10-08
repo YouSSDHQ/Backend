@@ -22,20 +22,6 @@ class BaseResponse(BaseModel):
         examples=["Data logged successfully!", "Error logging data!"],
     )
 
-    # Status of the response, must be either "success" or "error"
-    status: str = Field(
-        default="success",
-        description="Status of the response",
-        enum=["success", "error"],
-        examples=["success", "error"],
-    )
-
-    data: Union[List, Dict] = Field(
-        None,
-        description="Data to return in the response",
-        examples=[["1", "2"], {"e": 1, "f": 2}],
-    )
-
 
 class ErrorResponse(BaseModel):
     """

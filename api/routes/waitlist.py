@@ -1,5 +1,5 @@
 from quart import Blueprint
-from quart_schema import validate_request, validate_response
+from quart_schema import DataSource, validate_request, validate_response
 
 from models.waitlist import WaitlistJoinRequest, WaitlistJoinResponse
 from services.database import get_session
@@ -10,7 +10,7 @@ bp = Blueprint("waitlist", __name__)
 
 
 @bp.route("/waitlist", methods=["POST"])
-@validate_request(WaitlistJoinRequest)
+@validate_request(WaitlistJoinRequest, source=DataSource.JSON)
 @validate_response(WaitlistJoinResponse)
 async def waitlist(data: WaitlistJoinRequest):
     """
@@ -20,9 +20,9 @@ async def waitlist(data: WaitlistJoinRequest):
         str: response message
     """
 
-    print(f"email='{data.email}' phone_number='{data.phone_number}'")
+    print(f"phone_number='{data.phone_number}'")
     async with get_session() as sess:
         user_service = UserService(sess)
         status, message = await user_service.add_to_waitlist(data)
-
-    return WaitlistJoinResponse(message=message), status
+    print(f"status='{status}' message='{message}'")
+    return WaitlistJoinResponse(message=message), int(status)

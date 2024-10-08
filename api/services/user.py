@@ -82,21 +82,23 @@ class UserService:
         return user
 
     async def add_to_waitlist(self, data: WaitlistJoinRequest):
-        email = data.email
+        print(f"data: {data}")
+        email = ""
         phone_number = data.phone_number
         user_id = None
         stmt = select(Waitlist).where(
             or_(Waitlist.email == email, Waitlist.phone_number == phone_number)
         )
+
         waitlisted = await self.session.execute(stmt)
         if waitlisted.scalar_one_or_none():
             id_ = phone_number or email
-            return 409, f"User {id_} already waitlisted"
-        user = await self.get_user_by_phone_number(data.phone_number)
+            return 400, f"User {id_} already waitlisted"
+        user = await self.get_user_by_phone_number(phone_number)
         if user:
             user_id = user.id
         waitlist = Waitlist(
-            email=data.email, phone_number=data.phone_number, user_id=user_id
+            email=data.email, phone_number=phone_number, user_id=user_id
         )
         self.session.add(waitlist)
         await self.session.commit()
