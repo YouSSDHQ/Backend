@@ -187,7 +187,9 @@ async def handle_send_tokens_confirm(data: UssdRequest) -> str:
     parts = data.text.split("*")
     print(f"Parts: {parts}")
     if parts[-1] == "1":
-        await finalize_transaction(data, user_id, recipient, amount)
+        set_session(data.session_id, {"state": "finalize_transaction"})
+        return "CON Enter transaction pin:"
+
     elif parts[-1] == "2":
         delete_session(data.session_id)
         return "END Transaction canceled."
