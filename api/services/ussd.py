@@ -77,6 +77,21 @@ async def process_request(data: UssdRequest) -> str:
         return "END An error occurred. Please try again."
 
 
+async def view_details(data: UssdRequest) -> str:
+    session_data = get_session_data(data.session_id)
+    user_id = session_data.get("user_id")
+    print(f"user_id: {user_id}")
+    if not user_id:
+        return "END Please sign up first."
+    async with get_session() as sess:
+        user_service = UserService(sess)
+        user = await user_service.get_user(user_id)
+    if not user:
+        return "END Please sign up first."
+    print(f"user: {user}")
+    return f"END Username: {user.username}\nWallet nick: {user.wallet_alias}\nPublic key: {user.public_key}\nBalance: {user.sol_balance} SOL"
+
+
 async def handle_wallet_access(data: UssdRequest) -> str:
     set_session(data.session_id, {"state": "wallet_access"})
     response = data.text.split("*")[-1]
@@ -100,6 +115,11 @@ async def handle_existing_user(data: UssdRequest) -> str:
     elif response == "1":
         set_session(data.session_id, {"state": "wallet_access"})
         return "CON Wallet Access:\n1. View Balance\n2. Send sol\n3. Back to Main Menu"
+    elif response == "3":
+        set_session(data.session_id, {"state": "view_details"})
+        return await view_details(data)
+    else:
+        return "END Invalid input. Please try again."
 
 
 async def handle_view_balance(data: UssdRequest) -> str:
@@ -237,7 +257,7 @@ async def handle_initial_state(data: UssdRequest) -> str:
                 data.session_id,
                 {"user_id": existing_user.id, "state": "existing_user"},
             )
-            return f"CON Welcome back {existing_user.username}.\nCurrent balance: {existing_user.sol_balance} SOL.\n\n What would you like to do?\n1. Access wallet\n2. Quit"
+            return f"CON Welcome back {existing_user.username}.\nCurrent balance: {existing_user.sol_balance} SOL.\n\n What would you like to do?\n1. Access wallet\n2. Quit\n3. View details"
         else:
             set_session(data.session_id, {"state": "initial"})
         return "CON Welcome to YouSSD. What would you like to do?\n1. Sign up\n2. Access wallet"
