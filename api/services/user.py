@@ -89,7 +89,7 @@ class UserService:
         result = await self.session.execute(stmt)
         waitlisted = result.scalar_one_or_none()
         if waitlisted:
-            return 400, f"User {phone_number} already waitlisted"
+            return 400, f"You have already joined our waitlist"
         user = await self.get_user_by_phone_number(phone_number)
         if user:
             user_id = user.id
