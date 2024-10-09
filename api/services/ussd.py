@@ -73,6 +73,8 @@ async def process_request(data: UssdRequest) -> str:
         return await handle_send_tokens_confirm(data)
     elif state == "view_balance":
         return await handle_view_balance(data)
+    elif state == "finalize_transaction":
+        return await finalize_transaction(data)
     else:
         return "END An error occurred. Please try again."
 
@@ -219,13 +221,24 @@ async def handle_send_tokens_confirm(data: UssdRequest) -> str:
 
 
 async def finalize_transaction(
-    data: UssdRequest, user_id: int, recipient: str, amount: float
+    data: UssdRequest, user_id: int, recipient_id: str, amount: float
 ) -> str:
     """Finalizes the transaction by sending the tokens."""
-    # Retrieve sender's keypair and recipient's public key
-    sender_keypair = await get_user_keypair(user_id)
-    recipient_pubkey = await get_user_public_key(recipient)
+    session_id = data.session_id
+    sender = session_cache.get(session_id, {}).get("user")
+    parts = data.text.split("*")
+    pin = parts[-1]
+    if pin != sender.get("transaction_pin"):
+        return "END Invalid pin. Please try again."
+    # Retrieve sender's keypair and recipient's public key and send the tokens
+    async with get_session() as sess:
+        user_service = UserService(sess)
+        recipient = await user_service.get_user(recipient_id)
 
+    if not recipient:
+        return f"END User {recipient_id} not found"
+    sender_keypair = Pubkey.from_string(sender.get("public_key"))
+    recipient_pubkey = Pubkey.from_string(recipient.public_key)
     try:
         tx_signature = await sol_transfer.send_sol(
             sender_keypair, Pubkey.from_string(recipient_pubkey), amount
