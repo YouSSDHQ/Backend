@@ -13,21 +13,18 @@ class Waitlist(Base):
 
     id: Mapped[UUID4] = mapped_column(Uuid, primary_key=True, default=uuid4)
     user_id: Mapped[UUID4] = mapped_column(Uuid, nullable=True)
-    email: Mapped[str] = mapped_column(String(100), nullable=False)
     phone_number: Mapped[str] = mapped_column(String(20), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=datetime.now(tz=timezone.utc)
     )
 
-    def __init__(self, email: str, phone_number: str, user_id=None):
-        self.email = email
+    def __init__(self, phone_number: str, user_id=None):
         self.phone_number = phone_number
         self.user_id = user_id
 
     def to_dict(self) -> dict[str, str]:
         return {
             "id": str(self.id),
-            "email": self.email,
             "phone_number": self.phone_number,
             "created_at": str(self.created_at),
         }
