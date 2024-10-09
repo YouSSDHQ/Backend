@@ -85,7 +85,9 @@ class UserService:
         print(f"data: {data}")
         phone_number = data.phone_number
         user_id = None
-        waitlisted = await self.get_user_by_phone_number(phone_number)
+        stmt = select(Waitlist).where(Waitlist.phone_number == phone_number)
+        result = await self.session.execute(stmt)
+        waitlisted = result.scalar_one_or_none()
         if waitlisted:
             return 400, f"User {phone_number} already waitlisted"
         user = await self.get_user_by_phone_number(phone_number)
