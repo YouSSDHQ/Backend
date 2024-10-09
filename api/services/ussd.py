@@ -82,16 +82,14 @@ async def process_request(data: UssdRequest) -> str:
 async def view_details(data: UssdRequest) -> str:
     session_data = get_session_data(data.session_id)
     user_id = session_data.get("user_id")
+    user: Dict = session_data.get("user")
     print(f"user_id: {user_id}")
     if not user_id:
         return "END Please sign up first."
-    async with get_session() as sess:
-        user_service = UserService(sess)
-        user = await user_service.get_user(user_id)
     if not user:
         return "END Please sign up first."
     print(f"user: {user}")
-    return f"END Username: {user.username}\nWallet nick: {user.wallet_alias}\nPublic key: {user.public_key}\nBalance: {user.sol_balance} SOL"
+    return f'END Username: {user.get("username")}\nWallet nick: {user.get("alias")}\nPublic key: {user.get("public_key")}\nBalance: {user.get("balance")} SOL'
 
 
 async def handle_wallet_access(data: UssdRequest) -> str:
@@ -124,6 +122,7 @@ async def handle_existing_user(data: UssdRequest) -> str:
         return "END Invalid input. Please try again."
 
 
+# region handle view balance
 async def handle_view_balance(data: UssdRequest) -> str:
     async with get_session() as sess:
         user_service = UserService(sess)
@@ -175,6 +174,7 @@ async def handle_send_tokens(data: UssdRequest) -> str:
         return "END Invalid input. Please try again."
 
 
+# region handle send tokens amount
 async def handle_send_tokens_amount(data: UssdRequest) -> str:
     """Handles the stage of receiving the amount to send."""
     session_data = get_session_data(data.session_id)
@@ -249,7 +249,7 @@ async def finalize_transaction(
             user = await user_service.get_user(user_id)
             user.sol_balance -= amount
             await sess.commit()
-        return f"END Tokens sent successfully. Transaction signature: {tx_signature}"
+        return "END Tokens sent successfully. Expect an sms"
     except Exception as e:
         set_session(data.session_id, {"state": "initial"})
         return f"END Failed to send tokens: {str(e)}"
